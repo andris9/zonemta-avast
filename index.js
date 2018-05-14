@@ -32,6 +32,7 @@ class Scanner extends Transform {
 
         this.scanner.scan('message.eml', this.message, (err, result) => {
             this.scanned = true;
+            this.scanner.quit();
 
             if (err) {
                 this.errored = err;
@@ -57,9 +58,9 @@ class Scanner extends Transform {
         }
 
         if (!this.message.write(chunk)) {
-            this.message.once('drain', () => done(chunk));
+            this.message.once('drain', () => done(null, chunk));
         } else {
-            return done(chunk);
+            return done(null, chunk);
         }
     }
 
@@ -83,6 +84,9 @@ module.exports.init = function(app, done) {
         let scanner = new Scanner(app, envelope);
 
         source.pipe(scanner).pipe(destination);
+        source.once('error', err => {
+            destination.emit('error', err);
+        });
     });
 
     app.addHook('message:queue', (envelope, messageInfo, next) => {
