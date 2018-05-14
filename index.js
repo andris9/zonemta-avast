@@ -72,6 +72,9 @@ class Scanner extends Transform {
             return done();
         }
         this.waiting = done;
+        if (!this.errored) {
+            this.message.end();
+        }
     }
 }
 
