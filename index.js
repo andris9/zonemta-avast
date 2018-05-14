@@ -34,6 +34,8 @@ class Scanner extends Transform {
             this.scanned = true;
             this.scanner.quit();
 
+            console.log(err || result);
+
             if (err) {
                 this.errored = err;
                 app.logger.info('Avast', '%s AVSCANFAIL error=%s', envelope.id, err.message);
