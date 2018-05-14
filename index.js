@@ -34,8 +34,6 @@ class Scanner extends Transform {
             this.scanned = true;
             this.scanner.quit();
 
-            console.log(err || result);
-
             if (err) {
                 this.errored = err;
                 app.logger.info('Avast', '%s AVSCANFAIL error=%s', envelope.id, err.message);
@@ -95,18 +93,13 @@ module.exports.init = function(app, done) {
     });
 
     app.addHook('message:queue', (envelope, messageInfo, next) => {
-        console.log(2);
         let interfaces = Array.isArray(app.config.interfaces) ? app.config.interfaces : [].concat(app.config.interfaces || []);
         if ((!interfaces.includes(envelope.interface) && !interfaces.includes('*')) || !envelope.avast) {
-            console.log(3);
             return next();
         }
-        console.log(4);
-
-        console.log(require('util').inspect(envelope, false, 22));
 
         if (envelope.avast && envelope.avast.status === 'infected') {
-            return next(app.reject(envelope, 'spam', messageInfo, '550 This message contains a virus and may not be delivered'));
+            return next(app.reject(envelope, 'virus', messageInfo, '550 This message contains a virus and may not be delivered'));
         }
 
         next();
