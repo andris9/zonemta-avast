@@ -95,10 +95,13 @@ module.exports.init = function(app, done) {
     });
 
     app.addHook('message:queue', (envelope, messageInfo, next) => {
+        console.log(2);
         let interfaces = Array.isArray(app.config.interfaces) ? app.config.interfaces : [].concat(app.config.interfaces || []);
         if ((!interfaces.includes(envelope.interface) && !interfaces.includes('*')) || !envelope.spam || !envelope.spam.default) {
+            console.log(3);
             return next();
         }
+        console.log(4);
 
         console.log(require('util').inspect(envelope, false, 22));
 
