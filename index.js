@@ -100,6 +100,8 @@ module.exports.init = function(app, done) {
             return next();
         }
 
+        console.log(require('util').inspect(envelope, false, 22));
+
         if (envelope.avast && envelope.avast.status === 'infected') {
             return next(app.reject(envelope, 'spam', messageInfo, '550 This message contains a virus and may not be delivered'));
         }
